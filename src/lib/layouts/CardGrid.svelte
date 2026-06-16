@@ -1,7 +1,3 @@
-<script lang="ts">
-  export let name = "Card Grid";
-</script>
-
 <div class="layout-root">
   <header class="header">
     <div class="logo-circle"></div>

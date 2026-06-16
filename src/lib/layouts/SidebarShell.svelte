@@ -1,7 +1,3 @@
-<script lang="ts">
-  export let name = "Sidebar Shell";
-</script>
-
 <div class="layout-root">
   <aside class="sidebar">
     <div class="avatar"></div>

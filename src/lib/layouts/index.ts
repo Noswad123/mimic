@@ -1,13 +1,23 @@
-import CardGrid from "./CardGrid.svelte";
-import SidebarShell from "./SidebarShell.svelte";
-
 export type LayoutDefinition = {
   id: string;
   name: string;
-  component: typeof CardGrid;
+  description: string;
 };
 
 export const layouts: LayoutDefinition[] = [
-  { id: "card-grid", name: "Card Grid", component: CardGrid },
-  { id: "sidebar-shell", name: "Sidebar Shell", component: SidebarShell }
+  {
+    id: "sidebar-workbench",
+    name: "Sidebar Workbench",
+    description: "Controls live on the left while the app specimen fills the main workbench."
+  },
+  {
+    id: "command-deck",
+    name: "Command Deck",
+    description: "Controls become a top command deck and the specimen turns into a wide dashboard."
+  },
+  {
+    id: "inspector-right",
+    name: "Inspector Right",
+    description: "The specimen leads, with theme controls acting like a right-side inspector."
+  }
 ];
