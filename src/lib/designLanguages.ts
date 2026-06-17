@@ -10,16 +10,16 @@ export const designLanguages: DesignLanguageDefinition[] = [
   {
     id: "hexware",
     name: "Hexware",
-    description: "Angular arcane-tech: clipped panels, hot/cold borders, luminous controls, and ritual geometry."
+    description: "An arcane-tech substrate that hardens the mimic into clipped panels, luminous controls, and ritual geometry."
   },
   {
     id: "cloud-spire",
     name: "Cloud Spire",
-    description: "Elevated cloud architecture: airy spacing, tall soft panels, pearl highlights, and floating structure."
+    description: "An atmospheric substrate that lifts the mimic into airy spacing, tall soft panels, and floating structure."
   },
   {
     id: "aquacore",
     name: "Aquacore",
-    description: "Liquid interface core: smooth rounded surfaces, reflective layers, ripple glows, and fluid depth."
+    description: "A liquid-memory substrate that softens the mimic into rounded surfaces, reflective layers, and fluid depth."
   }
 ];

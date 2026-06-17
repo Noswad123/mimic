@@ -26,9 +26,9 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
       sans-serif;
     background:
-      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--pink-signal) 10%, transparent), transparent 14rem),
-      var(--bg);
-    color: var(--fg);
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent-signal) 10%, transparent), transparent 14rem),
+      var(--background-canvas);
+    color: var(--text-primary);
     border-radius: 0.75rem;
     padding: 1.25rem;
     border: 1px solid var(--soft-border);
@@ -53,15 +53,15 @@
     height: 3rem;
     border-radius: 999px;
     background:
-      radial-gradient(circle at 70% 20%, var(--pink-signal), transparent 42%),
-      linear-gradient(135deg, var(--frost), var(--accent-hot));
+      radial-gradient(circle at 70% 20%, var(--accent-signal), transparent 42%),
+      linear-gradient(135deg, var(--action-secondary), var(--action-primary-hover));
     margin-bottom: 0.5rem;
   }
 
   .nav-item {
     height: 0.65rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--frost) 42%, var(--bg));
+    background: color-mix(in srgb, var(--action-secondary) 42%, var(--background-canvas));
     opacity: 0.38;
   }
 
@@ -79,7 +79,7 @@
     height: 1rem;
     width: 40%;
     border-radius: 999px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-hot));
+    background: linear-gradient(90deg, var(--action-primary), var(--action-primary-hover));
     opacity: 0.48;
   }
 
@@ -93,7 +93,7 @@
     height: 0.6rem;
     width: 20%;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--border) 36%, var(--bg));
+    background: color-mix(in srgb, var(--border-accent) 36%, var(--background-canvas));
     opacity: 0.4;
   }
 
@@ -106,7 +106,7 @@
   .line {
     height: 0.55rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--fg-muted) 22%, var(--bg));
+    background: color-mix(in srgb, var(--text-secondary) 22%, var(--background-canvas));
     opacity: 0.55;
   }
 

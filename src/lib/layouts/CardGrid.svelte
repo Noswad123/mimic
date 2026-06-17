@@ -23,10 +23,10 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
       sans-serif;
     background:
-      radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 16rem),
-      radial-gradient(circle at 20% 90%, color-mix(in srgb, var(--frost) 10%, transparent), transparent 18rem),
-      var(--bg);
-    color: var(--fg);
+      radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--action-primary) 12%, transparent), transparent 16rem),
+      radial-gradient(circle at 20% 90%, color-mix(in srgb, var(--action-secondary) 10%, transparent), transparent 18rem),
+      var(--background-canvas);
+    color: var(--text-primary);
     border-radius: 0.75rem;
     padding: 1.5rem;
     border: 1px solid var(--soft-border);
@@ -46,8 +46,8 @@
     height: 2.5rem;
     border-radius: 999px;
     background:
-      radial-gradient(circle at 70% 20%, var(--pink-signal), transparent 42%),
-      linear-gradient(135deg, var(--frost), var(--accent-hot));
+      radial-gradient(circle at 70% 20%, var(--accent-signal), transparent 42%),
+      linear-gradient(135deg, var(--action-secondary), var(--action-primary-hover));
     opacity: 0.9;
   }
 
@@ -59,7 +59,7 @@
   .subtitle {
     height: 0.75rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--fg-muted) 20%, var(--bg));
+    background: color-mix(in srgb, var(--text-secondary) 20%, var(--background-canvas));
   }
 
   .title {
@@ -91,7 +91,7 @@
   .card-body,
   .card-footer {
     border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--accent-hot) 34%, var(--bg));
+    background: color-mix(in srgb, var(--action-primary-hover) 34%, var(--background-canvas));
     opacity: 0.36;
   }
 

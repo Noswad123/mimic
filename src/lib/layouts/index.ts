@@ -8,21 +8,21 @@ export const layouts: LayoutDefinition[] = [
   {
     id: "sidebar-workbench",
     name: "Left Sidebar",
-    description: "Theme tooling is embedded in the app's left sidebar beside the live specimen."
+    description: "A layout form that tunes the mimic into a left-side control rail with the main display held to the right."
   },
   {
     id: "command-deck",
     name: "Command Deck",
-    description: "Theme tooling becomes an integrated top command deck above the wide specimen."
+    description: "A layout form that raises command and search behavior to the top before the mimic spreads into a wide display."
   },
   {
     id: "inspector-right",
     name: "Left and Right Sidebars",
-    description: "Navigation stays on the left while theme tooling is embedded in a right sidebar."
+    description: "A layout form that brackets the mimic between twin sidebars, leaving the main display stabilized in the center."
   },
   {
     id: "right-sidebar",
     name: "Right Sidebar",
-    description: "The app content leads with theme tooling embedded only in a right sidebar."
+    description: "A layout form that lets the main display lead while controls gather along the right edge."
   }
 ];

@@ -1,0 +1,561 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Cinzel:wght@400;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;600;700&family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&family=Playfair+Display:wght@400;600;700;800&family=Rajdhani:wght@400;600;700&family=Source+Serif+4:wght@400;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Unbounded:wght@400;600;700;800&display=swap");
+
+body {
+  margin: 0;
+  font-family: var(--font-body, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.app-root {
+  --border-subtle-alpha: color-mix(in srgb, var(--border-subtle) 28%, transparent);
+  --border-focus-alpha: color-mix(in srgb, var(--border-focus) 72%, transparent);
+  --action-primary-glow: color-mix(in srgb, var(--action-primary) 52%, transparent);
+  --action-secondary-glow: color-mix(in srgb, var(--action-secondary) 36%, transparent);
+  --soft-border: var(--border-subtle-alpha);
+  --panel-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-raised) 94%, transparent),
+    color-mix(in srgb, var(--background-canvas) 96%, transparent)
+  ), repeating-linear-gradient(135deg, color-mix(in srgb, white 2.5%, transparent) 0 1px, transparent 1px 8px);
+  --panel-bg-strong: linear-gradient(180deg, var(--surface-raised), var(--background-canvas));
+  --selected-fill: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--action-primary) 32%, var(--background-canvas)),
+    color-mix(in srgb, var(--background-canvas) 92%, transparent)
+  );
+  --cold-fill: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--action-secondary) 16%, var(--surface-panel)),
+    color-mix(in srgb, var(--surface-panel) 96%, var(--background-canvas))
+  );
+  --muted: var(--text-secondary);
+  --dim: var(--text-tertiary);
+  --faint: color-mix(in srgb, var(--text-primary) 36%, transparent);
+  --action-primary-soft: color-mix(in srgb, var(--action-primary) 22%, transparent);
+  --action-secondary-soft: color-mix(in srgb, var(--border-accent) 18%, transparent);
+  --cut-corners: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+  --transition-speed: 180ms;
+
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "workspace";
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent-signal) 11%, transparent), transparent 23rem),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--action-primary) 14%, transparent), transparent 28rem),
+    radial-gradient(circle at 70% 90%, color-mix(in srgb, var(--action-secondary) 12%, transparent), transparent 31rem),
+    repeating-linear-gradient(90deg, color-mix(in srgb, white 1.8%, transparent) 0 1px, transparent 1px 80px),
+    linear-gradient(135deg, color-mix(in srgb, white 3.5%, var(--background-canvas)), var(--background-canvas) 46%, color-mix(in srgb, var(--background-canvas) 84%, black));
+  color: var(--text-primary);
+  font-family: var(--font-body, Inter, ui-sans-serif, system-ui, sans-serif);
+}
+
+.app-root::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.treatment-capture-film::after {
+  background:
+    repeating-linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 8%, transparent) 0 1px, transparent 1px 7px),
+    linear-gradient(115deg, transparent 0 34%, color-mix(in srgb, var(--text-primary) 12%, transparent) 45%, transparent 56% 100%),
+    radial-gradient(circle at 28% 18%, color-mix(in srgb, var(--action-secondary) 12%, transparent), transparent 28rem),
+    radial-gradient(circle at 76% 72%, color-mix(in srgb, var(--action-primary) 10%, transparent), transparent 26rem);
+  mix-blend-mode: screen;
+  opacity: 0.48;
+}
+
+.treatment-resonance {
+  --border-subtle-alpha: color-mix(in srgb, var(--border-accent) 42%, transparent);
+  --border-focus-alpha: color-mix(in srgb, var(--action-primary-hover) 82%, transparent);
+  --action-primary-glow: color-mix(in srgb, var(--action-primary) 68%, transparent);
+  --action-secondary-glow: color-mix(in srgb, var(--action-secondary) 50%, transparent);
+}
+
+.treatment-resonance::after {
+  background:
+    radial-gradient(circle at 22% 8%, color-mix(in srgb, var(--accent-signal) 14%, transparent), transparent 24rem),
+    radial-gradient(circle at 86% 20%, color-mix(in srgb, var(--action-primary) 15%, transparent), transparent 26rem),
+    radial-gradient(circle at 50% 88%, color-mix(in srgb, var(--action-secondary) 12%, transparent), transparent 28rem);
+  mix-blend-mode: screen;
+  opacity: 0.32;
+}
+
+.treatment-resonance .panel,
+.treatment-resonance .product-shell {
+  filter: saturate(1.12) contrast(1.03);
+}
+
+.design-cloud-spire {
+  --cut-corners: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  --panel-bg:
+    linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 8%, var(--surface-panel)), color-mix(in srgb, var(--surface-raised) 94%, transparent)),
+    linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 3%, transparent), transparent);
+  --selected-fill: linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 6%, var(--action-primary)), color-mix(in srgb, var(--action-primary) 28%, var(--surface-panel)));
+  --cold-fill: linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 5%, var(--action-secondary)), color-mix(in srgb, var(--action-secondary) 20%, var(--surface-panel)));
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--text-primary) 4%, transparent), transparent 24rem),
+    radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--action-secondary) 14%, transparent), transparent 30rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 3%, var(--background-canvas)), var(--background-canvas));
+}
+
+.design-aquacore {
+  --cut-corners: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  --panel-bg:
+    radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--action-secondary) 20%, transparent), transparent 22rem),
+    radial-gradient(ellipse at 85% 100%, color-mix(in srgb, var(--action-primary) 14%, transparent), transparent 24rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 82%, transparent), color-mix(in srgb, var(--background-canvas) 90%, transparent));
+  --selected-fill:
+    radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--action-primary) 28%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--action-secondary) 16%, var(--surface-panel)), color-mix(in srgb, var(--background-canvas) 82%, transparent));
+  --cold-fill:
+    radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--action-secondary) 20%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 88%, transparent), color-mix(in srgb, var(--background-canvas) 92%, transparent));
+}
+
+.app-root *,
+.app-root *::before,
+.app-root *::after {
+  box-sizing: border-box;
+}
+
+.panel {
+  border: 1px solid var(--border-subtle-alpha);
+  border-radius: 0.45rem;
+  background: var(--panel-bg);
+  clip-path: var(--cut-corners);
+  box-shadow:
+    0 24px 64px color-mix(in srgb, black 45%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, white 3.5%, transparent),
+    inset 0 0 22px color-mix(in srgb, var(--action-secondary) 4.5%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.design-cloud-spire .panel {
+  border-radius: 1.35rem;
+  clip-path: none;
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--border-accent) 34%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 18px 0 -14px color-mix(in srgb, var(--action-secondary) 24%, transparent),
+    0 34px 80px color-mix(in srgb, var(--action-secondary) 16%, transparent),
+    0 18px 42px color-mix(in srgb, var(--background-canvas) 42%, transparent),
+    0 2px 0 color-mix(in srgb, var(--text-primary) 7%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 9%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--border-accent) 10%, transparent);
+}
+
+.design-aquacore .panel {
+  border-radius: 1.75rem;
+  clip-path: none;
+  box-shadow:
+    0 28px 80px color-mix(in srgb, var(--action-secondary) 20%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 12%, transparent),
+    inset 0 -22px 46px color-mix(in srgb, var(--action-secondary) 9%, transparent),
+    inset 0 0 34px color-mix(in srgb, var(--action-primary) 5%, transparent);
+}
+
+.control-panel {
+  grid-area: controls;
+  align-self: start;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--soft-border);
+  border-radius: 0.45rem;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--action-secondary) 12%, transparent), transparent 16rem),
+    var(--panel-bg);
+  clip-path: var(--cut-corners);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 3.5%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--action-secondary) 5%, transparent);
+}
+
+.design-cloud-spire .control-panel {
+  background: var(--panel-bg);
+  border-color: color-mix(in srgb, var(--border-accent) 34%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 16px 0 -13px color-mix(in srgb, var(--action-secondary) 22%, transparent),
+    0 22px 48px color-mix(in srgb, var(--background-canvas) 34%, transparent),
+    0 1px 0 color-mix(in srgb, var(--text-primary) 7%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 9%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--border-accent) 10%, transparent);
+}
+
+.design-aquacore .control-panel {
+  background: var(--panel-bg);
+  border-color: color-mix(in srgb, var(--border-accent) 30%, transparent);
+  box-shadow:
+    inset 0 18px 38px color-mix(in srgb, var(--text-primary) 4%, transparent),
+    inset 0 -18px 42px color-mix(in srgb, var(--action-secondary) 7%, transparent);
+}
+
+.workspace {
+  grid-area: workspace;
+  min-width: 0;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.layout-command-deck .control-panel {
+  grid-template-columns: repeat(4, minmax(13rem, 1fr));
+  align-items: start;
+}
+
+.layout-command-deck .token-group,
+.layout-command-deck .theme-actions,
+.layout-command-deck .theme-io {
+  grid-column: span 2;
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  color: var(--action-secondary);
+  font-family: var(--font-accent, Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.workspace-heading h2 {
+  margin: 0;
+  letter-spacing: -0.06em;
+}
+
+.app-mark-capsule {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  justify-self: center;
+  width: clamp(3.25rem, 6vw, 4.5rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border-accent) 48%, transparent);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(circle at 48% 24%, color-mix(in srgb, var(--action-primary) 20%, transparent), transparent 56%),
+    radial-gradient(circle at 72% 82%, color-mix(in srgb, var(--action-secondary) 18%, transparent), transparent 58%),
+    color-mix(in srgb, var(--surface-raised) 88%, var(--background-canvas));
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--action-primary) 20%, transparent),
+    0 10px 28px color-mix(in srgb, black 28%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 12%, transparent),
+    inset 0 0 28px color-mix(in srgb, var(--action-secondary) 8%, transparent);
+}
+
+.app-mark-capsule::before,
+.app-mark-capsule::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.app-mark-capsule::before {
+  z-index: 1;
+  background:
+    linear-gradient(115deg, transparent 0 32%, color-mix(in srgb, var(--text-primary) 16%, transparent) 42%, transparent 53% 100%),
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--action-primary) 14%, transparent), transparent 68%);
+  mix-blend-mode: screen;
+}
+
+.app-mark-capsule::after {
+  z-index: 2;
+  background:
+    repeating-linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 8%, transparent) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, color-mix(in srgb, var(--action-secondary) 9%, transparent), color-mix(in srgb, var(--action-primary) 7%, transparent));
+  opacity: 0.42;
+}
+
+.app-mark {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: 82%;
+  height: auto;
+  filter:
+    saturate(1.08)
+    contrast(1.04)
+    drop-shadow(0 0 18px color-mix(in srgb, var(--action-primary) 34%, transparent));
+}
+
+.workspace-heading h2 {
+  font-family: var(--font-display, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(1.5rem, 2.5vw, 2.35rem);
+  color: var(--text-on-primary-action);
+  text-shadow: 0 0 16px color-mix(in srgb, var(--action-primary) 28%, transparent);
+}
+
+.workspace-heading p,
+.control-group p,
+.status {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.status {
+  font-size: 0.82rem;
+}
+
+.control-group {
+  min-width: 0;
+}
+
+.control-panel h2 {
+  margin: 0 0 0.45rem;
+  color: var(--action-primary-hover);
+  font-family: var(--font-accent, Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.84rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.theme-editor,
+.theme-io {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.theme-editor label,
+.theme-io label {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--muted);
+  font-family: var(--font-accent, Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+select,
+input[type="text"],
+textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 24%, transparent);
+  border-radius: 0.35rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-inset) 96%, transparent), color-mix(in srgb, var(--surface-panel) 96%, transparent));
+  color: var(--text-primary);
+  font: inherit;
+  box-shadow:
+    inset 0 0 18px color-mix(in srgb, black 38%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, white 2%, transparent);
+}
+
+select:focus,
+input[type="text"]:focus,
+textarea:focus {
+  border-color: var(--border-focus-alpha);
+  outline: none;
+  box-shadow:
+    inset 0 0 18px color-mix(in srgb, black 45%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--action-primary) 15%, transparent),
+    0 0 24px color-mix(in srgb, var(--action-primary) 10%, transparent);
+}
+
+select {
+  padding: 0.45rem 0.55rem;
+}
+
+input[type="text"],
+textarea {
+  padding: 0.5rem 0.6rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 30%, transparent);
+  border-radius: 0.35rem;
+  padding: 0.65rem 0.8rem;
+  background:
+    radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--action-secondary) 18%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-neutral) 72%, transparent), color-mix(in srgb, var(--surface-inset) 96%, transparent));
+  color: var(--border-accent);
+  cursor: pointer;
+  font-family: var(--font-accent, Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  box-shadow:
+    inset 0 0 16px color-mix(in srgb, var(--action-secondary) 6%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, white 5%, transparent);
+  transition:
+    border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease,
+    transform var(--transition-speed) ease,
+    filter var(--transition-speed) ease;
+}
+
+.design-cloud-spire button {
+  border-radius: 999px;
+  clip-path: none;
+  text-transform: none;
+  letter-spacing: 0.03em;
+}
+
+.design-aquacore button {
+  border-radius: 999px;
+  clip-path: none;
+  text-transform: none;
+}
+
+button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--border-accent) 55%, transparent);
+  box-shadow:
+    inset 0 0 24px color-mix(in srgb, var(--action-secondary) 12%, transparent),
+    0 0 18px color-mix(in srgb, var(--action-secondary) 8%, transparent);
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+button.primary {
+  background: var(--selected-fill);
+  border-color: var(--border-focus-alpha);
+  color: var(--text-on-primary-action);
+  box-shadow:
+    inset 4px 0 0 color-mix(in srgb, var(--action-primary-hover) 85%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--action-primary) 18%, transparent),
+    0 0 28px color-mix(in srgb, var(--action-primary) 16%, transparent);
+}
+
+button.danger {
+  border-color: color-mix(in srgb, var(--state-danger) 45%, transparent);
+  color: color-mix(in srgb, var(--state-danger) 68%, white);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--state-danger) 18%, var(--surface-inset)), color-mix(in srgb, var(--surface-inset) 98%, transparent));
+}
+
+.token-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.token-row {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 0.9fr) 40px minmax(0, 1fr);
+  gap: 0.45rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.token-row label {
+  color: var(--muted);
+}
+
+.token-row input[type="color"] {
+  width: 40px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--soft-border);
+  border-radius: 0.5rem;
+  background: transparent;
+}
+
+.hex-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.theme-io {
+  border-top: 1px solid var(--soft-border);
+  padding-top: 0.85rem;
+}
+
+.theme-io summary {
+  cursor: pointer;
+  color: var(--action-primary);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.workspace-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(7rem, auto);
+  gap: 1rem;
+  align-items: center;
+}
+
+.workspace-heading > span:not(.app-mark-capsule) {
+  justify-self: end;
+  border: 1px solid var(--soft-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: color-mix(in srgb, var(--action-secondary) 14%, transparent);
+  color: var(--border-accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-root,
+  .app-root *,
+  .app-root *::before,
+  .app-root *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .layout-command-deck .control-panel {
+    grid-template-columns: repeat(2, minmax(13rem, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .app-root {
+    padding: 0.6rem;
+  }
+
+  .workspace-heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .workspace-heading > span:not(.app-mark-capsule) {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .layout-command-deck .control-panel,
+  .control-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .layout-command-deck .token-group,
+  .layout-command-deck .theme-actions,
+  .layout-command-deck .theme-io {
+    grid-column: auto;
+  }
+}
