@@ -29,12 +29,46 @@ function isHexColor(value: unknown): value is string {
   return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value.trim());
 }
 
+function legacyTokenFallback(input: Record<string, unknown>, key: keyof ColorTokens) {
+  const aliases: Partial<Record<keyof ColorTokens, Array<keyof ColorTokens>>> = {
+    backgroundCanvas: ["bg" as keyof ColorTokens],
+    backgroundBase: ["bgAlt" as keyof ColorTokens],
+    surfacePanel: ["bgPanel" as keyof ColorTokens, "bgAlt" as keyof ColorTokens],
+    surfaceRaised: ["bgPanel2" as keyof ColorTokens, "bgAlt" as keyof ColorTokens],
+    surfaceNeutral: ["steel" as keyof ColorTokens, "bgAlt" as keyof ColorTokens],
+    surfaceNeutralStrong: ["steelLight" as keyof ColorTokens, "border" as keyof ColorTokens],
+    surfaceInset: ["steelDark" as keyof ColorTokens, "bg" as keyof ColorTokens],
+    textPrimary: ["fg" as keyof ColorTokens],
+    textSecondary: ["fgMuted" as keyof ColorTokens, "fg" as keyof ColorTokens],
+    textTertiary: ["fgDim" as keyof ColorTokens, "fg" as keyof ColorTokens],
+    actionPrimary: ["accent" as keyof ColorTokens],
+    textOnPrimaryAction: [],
+    actionPrimaryHover: ["accentHot" as keyof ColorTokens, "accent" as keyof ColorTokens],
+    actionPrimaryPressed: ["accentDeep" as keyof ColorTokens, "accent" as keyof ColorTokens],
+    actionSecondary: ["frost" as keyof ColorTokens, "border" as keyof ColorTokens],
+    actionSecondaryPressed: ["frostDeep" as keyof ColorTokens, "border" as keyof ColorTokens],
+    accentSignal: ["pinkSignal" as keyof ColorTokens, "accent" as keyof ColorTokens],
+    stateSuccess: ["success" as keyof ColorTokens, "border" as keyof ColorTokens],
+    stateDanger: ["danger" as keyof ColorTokens, "accent" as keyof ColorTokens],
+    borderAccent: ["border" as keyof ColorTokens],
+    borderSubtle: ["borderCold" as keyof ColorTokens, "border" as keyof ColorTokens],
+    borderFocus: ["borderHot" as keyof ColorTokens, "accent" as keyof ColorTokens]
+  };
+
+  for (const alias of aliases[key] ?? []) {
+    const candidate = input[alias];
+    if (isHexColor(candidate)) return candidate.trim();
+  }
+
+  return fallbackTokens[key];
+}
+
 function normalizeTokens(value: unknown): ColorTokens {
   const input = isObject(value) ? value : {};
 
   return tokenList.reduce((tokens, key) => {
     const candidate = input[key];
-    tokens[key] = isHexColor(candidate) ? candidate.trim() : fallbackTokens[key];
+    tokens[key] = isHexColor(candidate) ? candidate.trim() : legacyTokenFallback(input, key);
     return tokens;
   }, {} as ColorTokens);
 }

@@ -25,11 +25,13 @@
   .layout-root {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
       sans-serif;
-    background: var(--bg);
+    background:
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--pink-signal) 10%, transparent), transparent 14rem),
+      var(--bg);
     color: var(--fg);
     border-radius: 0.75rem;
     padding: 1.25rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--soft-border);
     display: grid;
     grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
     gap: 1rem;
@@ -38,33 +40,35 @@
 
   .sidebar {
     border-radius: 0.75rem;
-    background: var(--bg-alt);
+    background: var(--panel-bg);
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    border: 1px dashed var(--border);
+    border: 1px solid var(--soft-border);
   }
 
   .avatar {
     width: 3rem;
     height: 3rem;
     border-radius: 999px;
-    background: var(--accent);
+    background:
+      radial-gradient(circle at 70% 20%, var(--pink-signal), transparent 42%),
+      linear-gradient(135deg, var(--frost), var(--accent-hot));
     margin-bottom: 0.5rem;
   }
 
   .nav-item {
     height: 0.65rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 70%, var(--accent) 30%);
-    opacity: 0.25;
+    background: color-mix(in srgb, var(--frost) 42%, var(--bg));
+    opacity: 0.38;
   }
 
   .main {
     border-radius: 0.75rem;
-    background: var(--bg-alt);
-    border: 1px dashed var(--border);
+    background: var(--panel-bg);
+    border: 1px solid var(--soft-border);
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -75,8 +79,8 @@
     height: 1rem;
     width: 40%;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 60%, var(--accent) 40%);
-    opacity: 0.3;
+    background: linear-gradient(90deg, var(--accent), var(--accent-hot));
+    opacity: 0.48;
   }
 
   .meta-row {
@@ -89,8 +93,8 @@
     height: 0.6rem;
     width: 20%;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 70%, var(--accent) 30%);
-    opacity: 0.25;
+    background: color-mix(in srgb, var(--border) 36%, var(--bg));
+    opacity: 0.4;
   }
 
   .body {
@@ -102,8 +106,8 @@
   .line {
     height: 0.55rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 80%, var(--accent) 20%);
-    opacity: 0.3;
+    background: color-mix(in srgb, var(--fg-muted) 22%, var(--bg));
+    opacity: 0.55;
   }
 
   @media (max-width: 768px) {

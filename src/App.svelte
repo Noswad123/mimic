@@ -1,5 +1,6 @@
 <script lang="ts">
   import { layouts } from "./lib/layouts";
+  import { designLanguages, type DesignLanguageId } from "./lib/designLanguages";
   import AppShowcase from "./lib/components/AppShowcase.svelte";
   import { cloneTokens, tokenLabels, tokenList, type ColorTokens, type ThemeDefinition } from "./lib/colorTokens";
   import {
@@ -12,9 +13,20 @@
   } from "./lib/themeManager";
 
   const layoutOptions = layouts;
+  const designLanguageOptions = designLanguages;
   const importPlaceholder = 'Paste { "version": 1, "themes": [...] }';
+  const originalBuiltInThemeIds = new Set([
+    "astral",
+    "obsidian",
+    "ember",
+    "tidal",
+    "frost",
+    "verdant",
+    "heavenly"
+  ]);
 
   let selectedLayoutId = layoutOptions[0].id;
+  let selectedDesignLanguageId: DesignLanguageId = "hexware";
   let themes: ThemeDefinition[] = loadThemes();
   let selectedThemeId = themes[0].id;
 
@@ -140,25 +152,46 @@
   }
 
   $: selectedLayout = layoutOptions.find((layout) => layout.id === selectedLayoutId) ?? layoutOptions[0];
+  $: selectedDesignLanguage = designLanguageOptions.find((language) => language.id === selectedDesignLanguageId) ?? designLanguageOptions[0];
   $: selectedTheme = themes.find((theme) => theme.id === selectedThemeId);
+  $: originalThemes = themes.filter((theme) => theme.builtIn && originalBuiltInThemeIds.has(theme.id));
+  $: popularThemes = themes.filter((theme) => theme.builtIn && !originalBuiltInThemeIds.has(theme.id));
+  $: customThemes = themes.filter((theme) => !theme.builtIn);
   $: customThemeCount = themes.filter((theme) => !theme.builtIn).length;
 </script>
 
 <div
-  class={`app-root layout-${selectedLayoutId}`}
+  class={`app-root layout-${selectedLayoutId} design-${selectedDesignLanguageId}`}
   style={`
-    --bg: ${tokens.bg};
-    --bg-alt: ${tokens.bgAlt};
-    --fg: ${tokens.fg};
-    --accent: ${tokens.accent};
-    --border: ${tokens.border};
+    --bg: ${tokens.backgroundCanvas};
+    --bg-alt: ${tokens.backgroundBase};
+    --bg-panel: ${tokens.surfacePanel};
+    --bg-panel-2: ${tokens.surfaceRaised};
+    --steel: ${tokens.surfaceNeutral};
+    --steel-light: ${tokens.surfaceNeutralStrong};
+    --steel-dark: ${tokens.surfaceInset};
+    --fg: ${tokens.textPrimary};
+    --fg-muted: ${tokens.textSecondary};
+    --fg-dim: ${tokens.textTertiary};
+    --accent: ${tokens.actionPrimary};
+    --action-primary-text: ${tokens.textOnPrimaryAction};
+    --accent-hot: ${tokens.actionPrimaryHover};
+    --accent-deep: ${tokens.actionPrimaryPressed};
+    --frost: ${tokens.actionSecondary};
+    --frost-deep: ${tokens.actionSecondaryPressed};
+    --pink-signal: ${tokens.accentSignal};
+    --success: ${tokens.stateSuccess};
+    --danger: ${tokens.stateDanger};
+    --border: ${tokens.borderAccent};
+    --border-cold-token: ${tokens.borderSubtle};
+    --border-hot-token: ${tokens.borderFocus};
   `}
 >
   <header class="app-header panel">
     <div>
-      <p class="eyebrow">Hexware laboratory</p>
+      <p class="eyebrow">Design system laboratory</p>
       <h1>Mimic</h1>
-      <p>Manage reusable Jamal Arcana themes against realistic app components and whole-app layouts.</p>
+      <p>Combine original design languages, reusable color themes, realistic components, and whole-app layouts.</p>
     </div>
     <div class="theme-count">
       <strong>{themes.length}</strong>
@@ -166,110 +199,124 @@
     </div>
   </header>
 
-  <section class="control-panel panel" aria-label="Theme and layout controls">
-    <div class="control-group">
-      <h2>Layout</h2>
-      <select bind:value={selectedLayoutId}>
-        {#each layoutOptions as layout}
-          <option value={layout.id}>{layout.name}</option>
-        {/each}
-      </select>
-      <p>{selectedLayout.description}</p>
-    </div>
-
-    <div class="control-group">
-      <h2>Theme</h2>
-      <select bind:value={selectedThemeId} on:change={(e) =>
-        selectTheme((e.currentTarget as HTMLSelectElement).value)
-      }>
-        {#each themes as theme}
-          <option value={theme.id}>{theme.name}{theme.builtIn ? " · built-in" : ""}</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="theme-editor control-group">
-      <label>
-        Name
-        <input bind:value={draftName} type="text" placeholder="Theme name" />
-      </label>
-      <label>
-        Notes
-        <textarea bind:value={draftDescription} rows="3" placeholder="Describe the vibe, intent, and best use cases."></textarea>
-      </label>
-    </div>
-
-    <div class="token-group control-group">
-      <h2>Tokens</h2>
-      <div class="token-list">
-        {#each tokenList as key}
-          <div class="token-row">
-            <label for={`token-${key}`}>{tokenLabels[key]}</label>
-            <input
-              id={`token-${key}`}
-              type="color"
-              bind:value={tokens[key]}
-              on:input={(e) =>
-                handleTokenChange(
-                  key,
-                  (e.currentTarget as HTMLInputElement).value
-                )
-              }
-            />
-            <input
-              class="hex-input"
-              type="text"
-              aria-label={`${tokenLabels[key]} hex value`}
-              bind:value={tokens[key]}
-              on:input={(e) =>
-                handleTokenChange(
-                  key,
-                  (e.currentTarget as HTMLInputElement).value
-                )
-              }
-            />
-          </div>
-        {/each}
-      </div>
-    </div>
-
-    <div class="theme-actions control-group">
-      <div class="action-grid">
-        <button type="button" class="primary" on:click={saveCurrentTheme}>
-          {selectedTheme?.builtIn ? "Save as new" : "Save changes"}
-        </button>
-        <button type="button" on:click={duplicateTheme}>Duplicate</button>
-        <button type="button" on:click={resetDraft}>Reset draft</button>
-        <button type="button" class="danger" on:click={deleteTheme} disabled={selectedTheme?.builtIn}>Delete</button>
-      </div>
-      <p class="status">{statusMessage}</p>
-    </div>
-
-    <details class="theme-io control-group">
-      <summary>Import / export custom themes</summary>
-      <label>
-        Export JSON
-        <textarea readonly rows="6" bind:value={exportPayload}></textarea>
-      </label>
-      <label>
-        Import JSON
-        <textarea rows="6" bind:value={importPayload} placeholder={importPlaceholder}></textarea>
-      </label>
-      <button type="button" on:click={importThemes}>Import themes</button>
-    </details>
-  </section>
-
   <main class="workspace panel">
     <div class="workspace-heading">
       <div>
         <p class="eyebrow">Live app specimen</p>
-        <h2>{selectedTheme?.name}</h2>
-        <p>{selectedTheme?.description}</p>
+        <h2>{selectedTheme?.name} {selectedDesignLanguage.name}</h2>
       </div>
       <span>{selectedLayout.name}</span>
     </div>
 
-    <AppShowcase />
+    {#snippet themeControls()}
+      <section class="control-panel" aria-label="Theme and layout controls">
+        <div class="control-group">
+          <h2>Layout</h2>
+          <select bind:value={selectedLayoutId}>
+            {#each layoutOptions as layout}
+              <option value={layout.id}>{layout.name}</option>
+            {/each}
+          </select>
+          <p>{selectedLayout.description}</p>
+        </div>
+
+        <div class="control-group">
+          <h2>Design language</h2>
+          <select bind:value={selectedDesignLanguageId}>
+            {#each designLanguageOptions as language}
+              <option value={language.id}>{language.name}</option>
+            {/each}
+          </select>
+          <p>{selectedDesignLanguage.description}</p>
+        </div>
+
+        <div class="control-group">
+          <h2>Color theme</h2>
+          <select bind:value={selectedThemeId} on:change={(e) =>
+            selectTheme((e.currentTarget as HTMLSelectElement).value)
+          }>
+            <optgroup label="Mimic originals">
+              {#each originalThemes as theme}
+                <option value={theme.id}>{theme.name}</option>
+              {/each}
+            </optgroup>
+            <optgroup label="Popular palettes">
+              {#each popularThemes as theme}
+                <option value={theme.id}>{theme.name}</option>
+              {/each}
+            </optgroup>
+            {#if customThemes.length}
+              <optgroup label="Custom themes">
+                {#each customThemes as theme}
+                  <option value={theme.id}>{theme.name}</option>
+                {/each}
+              </optgroup>
+            {/if}
+          </select>
+        </div>
+
+        <div class="token-group control-group">
+          <h2>Tokens</h2>
+          <div class="token-list">
+            {#each tokenList as key}
+              <div class="token-row">
+                <label for={`token-${key}`}>{tokenLabels[key]}</label>
+                <input
+                  id={`token-${key}`}
+                  type="color"
+                  bind:value={tokens[key]}
+                  on:input={(e) =>
+                    handleTokenChange(
+                      key,
+                      (e.currentTarget as HTMLInputElement).value
+                    )
+                  }
+                />
+                <input
+                  class="hex-input"
+                  type="text"
+                  aria-label={`${tokenLabels[key]} hex value`}
+                  bind:value={tokens[key]}
+                  on:input={(e) =>
+                    handleTokenChange(
+                      key,
+                      (e.currentTarget as HTMLInputElement).value
+                    )
+                  }
+                />
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <div class="theme-actions control-group">
+          <div class="action-grid">
+            <button type="button" class="primary" on:click={saveCurrentTheme}>
+              {selectedTheme?.builtIn ? "Save as new" : "Save changes"}
+            </button>
+            <button type="button" on:click={duplicateTheme}>Duplicate</button>
+            <button type="button" on:click={resetDraft}>Reset draft</button>
+            <button type="button" class="danger" on:click={deleteTheme} disabled={selectedTheme?.builtIn}>Delete</button>
+          </div>
+          <p class="status">{statusMessage}</p>
+        </div>
+
+        <details class="theme-io control-group">
+          <summary>Import / export custom themes</summary>
+          <label>
+            Export JSON
+            <textarea readonly rows="6" bind:value={exportPayload}></textarea>
+          </label>
+          <label>
+            Import JSON
+            <textarea rows="6" bind:value={importPayload} placeholder={importPlaceholder}></textarea>
+          </label>
+          <button type="button" on:click={importThemes}>Import themes</button>
+        </details>
+      </section>
+    {/snippet}
+
+    <AppShowcase layoutId={selectedLayoutId} designLanguageId={selectedDesignLanguageId} {themeControls} />
   </main>
 </div>
 
@@ -282,27 +329,78 @@
   }
 
   .app-root {
-    --soft-border: color-mix(in srgb, var(--border) 52%, transparent);
-    --panel-bg: color-mix(in srgb, var(--bg-alt) 82%, transparent);
-    --panel-bg-strong: color-mix(in srgb, var(--bg-alt) 92%, var(--bg));
-    --muted: color-mix(in srgb, var(--fg) 68%, var(--bg));
-    --faint: color-mix(in srgb, var(--fg) 42%, transparent);
-    --accent-soft: color-mix(in srgb, var(--accent) 18%, var(--bg-alt));
+    --border-cold: color-mix(in srgb, var(--border-cold-token) 28%, transparent);
+    --border-hot: color-mix(in srgb, var(--border-hot-token) 72%, transparent);
+    --ember-glow: color-mix(in srgb, var(--accent) 52%, transparent);
+    --frost-glow: color-mix(in srgb, var(--frost) 36%, transparent);
+    --soft-border: var(--border-cold);
+    --panel-bg: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg-panel-2) 94%, transparent),
+      color-mix(in srgb, var(--bg) 96%, transparent)
+    ),
+    repeating-linear-gradient(135deg, color-mix(in srgb, white 2.5%, transparent) 0 1px, transparent 1px 8px);
+    --panel-bg-strong: linear-gradient(180deg, var(--bg-panel-2), var(--bg));
+    --selected-fill: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 32%, var(--bg)),
+      color-mix(in srgb, var(--bg) 92%, transparent)
+    );
+    --cold-fill: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--frost) 16%, var(--bg-panel)),
+      color-mix(in srgb, var(--bg-panel) 96%, var(--bg))
+    );
+    --muted: var(--fg-muted);
+    --dim: var(--fg-dim);
+    --faint: color-mix(in srgb, var(--fg) 36%, transparent);
+    --accent-soft: color-mix(in srgb, var(--accent) 22%, transparent);
+    --frost-soft: color-mix(in srgb, var(--border) 18%, transparent);
+    --cut-corners: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
 
     box-sizing: border-box;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: minmax(18rem, 23rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "header header"
-      "controls workspace";
+      "header"
+      "workspace";
     gap: 1rem;
     padding: 1rem;
     background:
-      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--border) 26%, transparent), transparent 30rem),
-      radial-gradient(circle at 86% 6%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 28rem),
-      linear-gradient(135deg, var(--bg), color-mix(in srgb, var(--bg) 86%, black));
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--pink-signal) 11%, transparent), transparent 23rem),
+      radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 28rem),
+      radial-gradient(circle at 70% 90%, color-mix(in srgb, var(--frost) 12%, transparent), transparent 31rem),
+      repeating-linear-gradient(90deg, color-mix(in srgb, white 1.8%, transparent) 0 1px, transparent 1px 80px),
+      linear-gradient(135deg, color-mix(in srgb, white 3.5%, var(--bg)), var(--bg) 46%, color-mix(in srgb, var(--bg) 84%, black));
     color: var(--fg);
+  }
+
+  .design-cloud-spire {
+    --cut-corners: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    --panel-bg:
+      linear-gradient(180deg, color-mix(in srgb, var(--fg) 8%, var(--bg-panel)), color-mix(in srgb, var(--bg-panel-2) 94%, transparent)),
+      linear-gradient(180deg, color-mix(in srgb, var(--fg) 3%, transparent), transparent);
+    --selected-fill: linear-gradient(180deg, color-mix(in srgb, var(--fg) 6%, var(--accent)), color-mix(in srgb, var(--accent) 28%, var(--bg-panel)));
+    --cold-fill: linear-gradient(180deg, color-mix(in srgb, var(--fg) 5%, var(--frost)), color-mix(in srgb, var(--frost) 20%, var(--bg-panel)));
+    background:
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--fg) 4%, transparent), transparent 24rem),
+      radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--frost) 14%, transparent), transparent 30rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--fg) 3%, var(--bg)), var(--bg));
+  }
+
+  .design-aquacore {
+    --cut-corners: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    --panel-bg:
+      radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--frost) 20%, transparent), transparent 22rem),
+      radial-gradient(ellipse at 85% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 24rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--bg-panel-2) 82%, transparent), color-mix(in srgb, var(--bg) 90%, transparent));
+    --selected-fill:
+      radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in srgb, var(--frost) 16%, var(--bg-panel)), color-mix(in srgb, var(--bg) 82%, transparent));
+    --cold-fill:
+      radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--frost) 20%, transparent), transparent 62%),
+      linear-gradient(180deg, color-mix(in srgb, var(--bg-panel-2) 88%, transparent), color-mix(in srgb, var(--bg) 92%, transparent));
   }
 
   .app-root *,
@@ -312,11 +410,40 @@
   }
 
   .panel {
-    border: 1px solid var(--soft-border);
-    border-radius: 1.25rem;
+    border: 1px solid var(--border-cold);
+    border-radius: 0.45rem;
     background: var(--panel-bg);
-    box-shadow: 0 20px 60px color-mix(in srgb, var(--bg) 80%, black 20%);
+    clip-path: var(--cut-corners);
+    box-shadow:
+      0 24px 64px color-mix(in srgb, black 45%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, white 3.5%, transparent),
+      inset 0 0 22px color-mix(in srgb, var(--frost) 4.5%, transparent);
     backdrop-filter: blur(18px);
+  }
+
+  .design-cloud-spire .panel {
+    border-radius: 1.35rem;
+    clip-path: none;
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--border) 34%, transparent);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent),
+      0 18px 0 -14px color-mix(in srgb, var(--frost) 24%, transparent),
+      0 34px 80px color-mix(in srgb, var(--frost) 16%, transparent),
+      0 18px 42px color-mix(in srgb, var(--bg) 42%, transparent),
+      0 2px 0 color-mix(in srgb, var(--fg) 7%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--fg) 9%, transparent),
+      inset 0 -1px 0 color-mix(in srgb, var(--border) 10%, transparent);
+  }
+
+  .design-aquacore .panel {
+    border-radius: 1.75rem;
+    clip-path: none;
+    box-shadow:
+      0 28px 80px color-mix(in srgb, var(--frost) 20%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent),
+      inset 0 -22px 46px color-mix(in srgb, var(--frost) 9%, transparent),
+      inset 0 0 34px color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
   .app-header {
@@ -334,6 +461,35 @@
     display: grid;
     gap: 1rem;
     padding: 1rem;
+    border: 1px solid var(--soft-border);
+    border-radius: 0.45rem;
+    background:
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--frost) 12%, transparent), transparent 16rem),
+      var(--panel-bg);
+    clip-path: var(--cut-corners);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 3.5%, transparent),
+      inset 0 0 18px color-mix(in srgb, var(--frost) 5%, transparent);
+  }
+
+  .design-cloud-spire .control-panel {
+    background: var(--panel-bg);
+    border-color: color-mix(in srgb, var(--border) 34%, transparent);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent),
+      0 16px 0 -13px color-mix(in srgb, var(--frost) 22%, transparent),
+      0 22px 48px color-mix(in srgb, var(--bg) 34%, transparent),
+      0 1px 0 color-mix(in srgb, var(--fg) 7%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--fg) 9%, transparent),
+      inset 0 -1px 0 color-mix(in srgb, var(--border) 10%, transparent);
+  }
+
+  .design-aquacore .control-panel {
+    background: var(--panel-bg);
+    border-color: color-mix(in srgb, var(--border) 30%, transparent);
+    box-shadow:
+      inset 0 18px 38px color-mix(in srgb, var(--fg) 4%, transparent),
+      inset 0 -18px 42px color-mix(in srgb, var(--frost) 7%, transparent);
   }
 
   .workspace {
@@ -342,14 +498,6 @@
     display: grid;
     gap: 1rem;
     padding: 1rem;
-  }
-
-  .layout-command-deck {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "header"
-      "controls"
-      "workspace";
   }
 
   .layout-command-deck .control-panel {
@@ -363,16 +511,10 @@
     grid-column: span 2;
   }
 
-  .layout-inspector-right {
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
-    grid-template-areas:
-      "header header"
-      "workspace controls";
-  }
-
   .eyebrow {
     margin: 0 0 0.25rem;
-    color: var(--accent);
+    color: var(--frost);
+    font-family: Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.16em;
@@ -387,10 +529,17 @@
 
   .app-header h1 {
     font-size: clamp(2rem, 4vw, 3.4rem);
+    background: linear-gradient(90deg, var(--pink-signal), var(--accent-hot) 54%, var(--border));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   .workspace-heading h2 {
     font-size: clamp(1.5rem, 2.5vw, 2.35rem);
+    color: var(--action-primary-text);
+    text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 28%, transparent);
   }
 
   .app-header p,
@@ -404,9 +553,10 @@
   .theme-count {
     min-width: 7rem;
     padding: 0.8rem 1rem;
-    border: 1px solid var(--soft-border);
-    border-radius: 1rem;
-    background: var(--accent-soft);
+    border: 1px solid var(--border-hot);
+    border-radius: 0.4rem;
+    background: var(--selected-fill);
+    clip-path: var(--cut-corners);
     text-align: right;
   }
 
@@ -416,7 +566,7 @@
   }
 
   .theme-count strong {
-    color: var(--accent);
+    color: var(--action-primary-text);
     font-size: 1.5rem;
   }
 
@@ -431,7 +581,8 @@
 
   .control-panel h2 {
     margin: 0 0 0.45rem;
-    color: var(--muted);
+    color: var(--accent-hot);
+    font-family: Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.84rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -448,18 +599,36 @@
     display: grid;
     gap: 0.3rem;
     color: var(--muted);
+    font-family: Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
   }
 
   select,
   input[type="text"],
   textarea {
     width: 100%;
-    border: 1px solid var(--soft-border);
-    border-radius: 0.7rem;
-    background: color-mix(in srgb, var(--bg) 74%, var(--bg-alt));
+    border: 1px solid color-mix(in srgb, var(--border-cold-token) 24%, transparent);
+    border-radius: 0.35rem;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--steel-dark) 96%, transparent), color-mix(in srgb, var(--bg-panel) 96%, transparent));
     color: var(--fg);
     font: inherit;
+    box-shadow:
+      inset 0 0 18px color-mix(in srgb, black 38%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, white 2%, transparent);
+  }
+
+  select:focus,
+  input[type="text"]:focus,
+  textarea:focus {
+    border-color: var(--border-hot);
+    outline: none;
+    box-shadow:
+      inset 0 0 18px color-mix(in srgb, black 45%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent),
+      0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
   }
 
   select {
@@ -476,18 +645,43 @@
   }
 
   button {
-    border: 1px solid var(--soft-border);
-    border-radius: 0.75rem;
-    padding: 0.55rem 0.75rem;
-    background: color-mix(in srgb, var(--bg-alt) 74%, var(--bg));
-    color: var(--fg);
+    border: 1px solid color-mix(in srgb, var(--border-cold-token) 30%, transparent);
+    border-radius: 0.35rem;
+    padding: 0.65rem 0.8rem;
+    background:
+      radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--frost) 18%, transparent), transparent 58%),
+      linear-gradient(180deg, color-mix(in srgb, var(--steel) 72%, transparent), color-mix(in srgb, var(--steel-dark) 96%, transparent));
+    color: var(--border);
     cursor: pointer;
+    font-family: Rajdhani, Inter, ui-sans-serif, system-ui, sans-serif;
     font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    box-shadow:
+      inset 0 0 16px color-mix(in srgb, var(--frost) 6%, transparent),
+      inset 0 -1px 0 color-mix(in srgb, white 5%, transparent);
+  }
+
+  .design-cloud-spire button {
+    border-radius: 999px;
+    clip-path: none;
+    text-transform: none;
+    letter-spacing: 0.03em;
+  }
+
+  .design-aquacore button {
+    border-radius: 999px;
+    clip-path: none;
+    text-transform: none;
   }
 
   button:hover:not(:disabled) {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    border-color: color-mix(in srgb, var(--border) 55%, transparent);
+    box-shadow:
+      inset 0 0 24px color-mix(in srgb, var(--frost) 12%, transparent),
+      0 0 18px color-mix(in srgb, var(--frost) 8%, transparent);
+    transform: translateY(-1px);
   }
 
   button:disabled {
@@ -496,13 +690,19 @@
   }
 
   button.primary {
-    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 52%, var(--border)));
-    border-color: color-mix(in srgb, var(--accent) 80%, white 20%);
-    color: color-mix(in srgb, var(--bg) 86%, black);
+    background: var(--selected-fill);
+    border-color: var(--border-hot);
+    color: var(--action-primary-text);
+    box-shadow:
+      inset 4px 0 0 color-mix(in srgb, var(--accent-hot) 85%, transparent),
+      inset 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--accent) 16%, transparent);
   }
 
   button.danger {
-    color: color-mix(in srgb, #ff6b8a 72%, var(--fg));
+    border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+    color: color-mix(in srgb, var(--danger) 68%, white);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--danger) 18%, var(--steel-dark)), color-mix(in srgb, var(--steel-dark) 98%, transparent));
   }
 
   .token-list {
@@ -512,7 +712,7 @@
 
   .token-row {
     display: grid;
-    grid-template-columns: 84px 40px minmax(0, 1fr);
+    grid-template-columns: minmax(7.5rem, 0.9fr) 40px minmax(0, 1fr);
     gap: 0.45rem;
     align-items: center;
     font-size: 0.85rem;
@@ -543,7 +743,7 @@
   }
 
   .theme-io {
-    border-top: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+    border-top: 1px solid var(--soft-border);
     padding-top: 0.85rem;
   }
 
@@ -565,24 +765,14 @@
     border: 1px solid var(--soft-border);
     border-radius: 999px;
     padding: 0.35rem 0.65rem;
-    background: var(--accent-soft);
-    color: var(--accent);
+    background: color-mix(in srgb, var(--frost) 14%, transparent);
+    color: var(--border);
     font-size: 0.78rem;
     font-weight: 800;
     white-space: nowrap;
   }
 
   @media (max-width: 1100px) {
-    .app-root,
-    .layout-inspector-right,
-    .layout-command-deck {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        "header"
-        "controls"
-        "workspace";
-    }
-
     .layout-command-deck .control-panel {
       grid-template-columns: repeat(2, minmax(13rem, 1fr));
     }
